@@ -1,11 +1,30 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import HelloWorld from "./components/HelloWorld.vue";
+import TheWelcome from "./components/TheWelcome.vue";
+import { getInstance } from "./LockPlugin";
+import { Web3Provider } from "@ethersproject/providers";
+
+const auth = getInstance();
+
+async function login() {
+  await auth.login("walletconnect");
+  auth.web3 = new Web3Provider(auth.provider.value, "any");
+  console.log(
+    "🚀 ~ file: App.vue ~ line 11 ~ login ~ auth.web3.listAccounts()",
+    await auth.web3.listAccounts()
+  );
+}
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    <img
+      alt="Vue logo"
+      class="logo"
+      src="./assets/logo.svg"
+      width="125"
+      height="125"
+    />
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
@@ -15,10 +34,11 @@ import TheWelcome from './components/TheWelcome.vue'
   <main>
     <TheWelcome />
   </main>
+  <button @click="login">Test</button>
 </template>
 
 <style>
-@import './assets/base.css';
+@import "./assets/base.css";
 
 #app {
   max-width: 1280px;
