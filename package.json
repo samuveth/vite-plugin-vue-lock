@@ -1,6 +1,16 @@
 {
   "name": "vite-plugin-vue-lock",
-  "version": "0.0.0",
+  "version": "0.0.2",
+  "type": "module",
+  "main": "./dist/index.es.js",
+  "exports": {
+    ".": "./dist/index.es.js"
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
