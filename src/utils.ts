@@ -1,4 +1,4 @@
-export function getInjected() {
+export function getInjectedWallet() {
   const web3 = window.ethereum;
   if (!web3) return;
   let injected = {

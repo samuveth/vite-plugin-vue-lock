@@ -1,23 +1,22 @@
-import { ref, type App, type Ref } from "vue";
+import { ref, type App } from "vue";
 import walletconnect from "./connectors/walletconnect";
+import injected from "./connectors/injected";
 import type {
   JsonRpcFetchFunc,
   ExternalProvider,
 } from "@ethersproject/providers";
+import type { LockInstance } from "./types";
 
-const lockConnectors: { [key: string]: typeof walletconnect } = {
+const lockConnectors: {
+  [key: string]: typeof walletconnect | typeof injected;
+} = {
   walletconnect,
+  injected,
 };
 
 const name = "lock";
 
-let instance: {
-  isAuthenticated: Ref<boolean>;
-  provider: Ref<null | JsonRpcFetchFunc | ExternalProvider>;
-  login: (id: string) => Promise<void>;
-  logout: () => Promise<void>;
-  getConnector: () => Promise<string | false>;
-};
+let instance: LockInstance;
 
 export const useLock = ({ ...options }) => {
   if (instance) return instance;
@@ -30,7 +29,7 @@ export const useLock = ({ ...options }) => {
     return new lockConnectors[id](connectorOptions);
   }
 
-  async function login(id: string): Promise<void> {
+  async function login(id: string) {
     const localProvider = await getLockConnector(id).connect();
     if (localProvider !== null) {
       provider.value = localProvider as JsonRpcFetchFunc | ExternalProvider;
@@ -42,7 +41,7 @@ export const useLock = ({ ...options }) => {
     return;
   }
 
-  async function logout(): Promise<void> {
+  async function logout() {
     const id = await getConnector();
     if (id) {
       getLockConnector(id).logout();
@@ -53,7 +52,7 @@ export const useLock = ({ ...options }) => {
     return;
   }
 
-  async function getConnector(): Promise<string | false> {
+  async function getConnector() {
     const id = localStorage.getItem(`_${name}.connector`);
     if (id) {
       const isLoggedIn = await getLockConnector(id).isLoggedIn();
@@ -68,6 +67,7 @@ export const useLock = ({ ...options }) => {
     login,
     logout,
     getConnector,
+    getLockConnector,
   };
 
   return instance;
@@ -76,7 +76,15 @@ export const useLock = ({ ...options }) => {
 export default {
   install(
     app: App,
-    options: { connectors: { [key: string]: { id: string; name: string } } }
+    options: {
+      connectors: {
+        [key: string]: {
+          id: string;
+          name: string;
+          options?: Record<string, any>;
+        };
+      };
+    }
   ) {
     useLock(options);
   },

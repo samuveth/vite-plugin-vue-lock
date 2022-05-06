@@ -5,8 +5,12 @@ import type {
   ExternalProvider,
 } from "@ethersproject/providers";
 
+interface WalletConnectProviderOptions extends ConnectorOptions {
+  rpc: { "1": string; "4": string; "42": string };
+}
+
 export default class LockConnector extends Connector {
-  constructor(options: ConnectorOptions) {
+  constructor(options: WalletConnectProviderOptions) {
     super(options);
   }
   async connect(): Promise<void | ExternalProvider | JsonRpcFetchFunc> {

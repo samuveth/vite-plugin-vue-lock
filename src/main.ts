@@ -3,6 +3,10 @@ import App from "./App.vue";
 import LockPlugin from "./LockPlugin";
 
 const connectors = {
+  injected: {
+    id: "injected",
+    name: "MetaMask",
+  },
   walletconnect: {
     id: "walletconnect",
     name: "WalletConnect",
